@@ -134,7 +134,7 @@ const InterviewEvaluationApp = () => {
             <div>
               <label className="flex items-center space-x-2 text-lg font-medium text-gray-700 mb-3">
                 <MessageSquare className="w-5 h-5" />
-                <span>Mock Interview Response</span>
+                <span>Mock Interview Response(Tell me about yourself.)</span>
               </label>
               <textarea
                 name="candidateResponse"

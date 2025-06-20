@@ -1,4 +1,5 @@
-# Mock Evaluator module
+
+
 # 📄 File: backend/agents/mock_interview_evaluator.py
 
 import json
@@ -8,7 +9,8 @@ from llm_client import llm  # your configured Groq or Gemini model
 
 # Prompt Template
 EVALUATION_PROMPT = """
-Evaluate the following mock interview response:
+Evaluate the following mock interview response.
+Your output MUST be a valid JSON object.
 
 Question: {question}
 Candidate Response: {response}
@@ -26,7 +28,7 @@ Return your answer in JSON format with the following keys:
 - relevance (score out of 100)
 - feedback (list of 2-3 actionable tips to improve)
 
-No preamble.
+No preamble. No conversational text. Just the JSON.
 """
 
 # LangChain setup
@@ -39,8 +41,11 @@ def evaluate_mock_response(question: str, response: str) -> dict:
         "response": response
     })
     try:
-        return json.loads(raw)
+        # Strip whitespace and potential hidden characters before parsing
+        return json.loads(raw.strip())
+    except json.JSONDecodeError as e:
+        # Provide more specific error for JSON parsing issues
+        raise ValueError(f"Failed to parse LLM output as JSON: {e}\nRaw output: '{raw}'")
     except Exception as e:
-        raise ValueError(f"Failed to parse LLM output: {e}\nRaw output: {raw}")
-
-
+        # Catch any other unexpected errors
+        raise ValueError(f"An unexpected error occurred during LLM output parsing: {e}\nRaw output: '{raw}'")

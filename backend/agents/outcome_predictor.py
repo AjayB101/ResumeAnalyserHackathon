@@ -1,3 +1,5 @@
+# 📄 File: backend/agents/predict_outcome.py
+
 import json
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -20,12 +22,15 @@ template = PromptTemplate.from_template(PREDICTOR_PROMPT)
 predictor_chain = LLMChain(llm=llm, prompt=template)
 
 def predict_outcome(resume_scores: dict, mock_scores: dict, behavior_score: int) -> dict:
-    resume_avg = sum(resume_scores.values()) / len(resume_scores)
-    mock_avg = sum(mock_scores.values()) / len(mock_scores)
+    # Safely compute averages
+    def safe_avg(score_dict):
+        values = [v for v in score_dict.values() if isinstance(v, (int, float))]
+        return sum(values) / len(values) if values else 0
 
-    final_score = round(
-        0.4 * resume_avg + 0.4 * mock_avg + 0.2 * behavior_score
-    )
+    resume_avg = safe_avg(resume_scores)
+    mock_avg = safe_avg(mock_scores)
+
+    final_score = round(0.4 * resume_avg + 0.4 * mock_avg + 0.2 * behavior_score)
 
     justification = predictor_chain.run({
         "resume_avg": resume_avg,
