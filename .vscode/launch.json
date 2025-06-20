@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: FastAPI (api.py)",
+      "type": "python",
+      "request": "launch",
+      "module": "uvicorn",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend"
+      },
+      "args": [
+        "api:app",          // 👈 now you can drop the 'backend.' prefix
+        "--reload",
+        "--port", "8000"
+      ],
+      "cwd": "${workspaceFolder}/backend",  // 👈 set working directory to backend/
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    }
+  ]
+}

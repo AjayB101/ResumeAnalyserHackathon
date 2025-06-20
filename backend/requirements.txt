@@ -3,16 +3,22 @@ langgraph
 langchain_groq
 pydantic
 tiktoken
-
 pdfplumber
 python-docx
 
 whisper
-
+langchain_community
 chromadb
 sentence-transformers
-
+newspaper3k
 fastapi
-
+pandas
 python-dotenv
+python-multipart
+docx2txt
+lxml[html_clean]
+langchain-tavily
+tavily-python
+langchain_google_genai
+protobuf==4.25.3
 
