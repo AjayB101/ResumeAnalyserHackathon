@@ -1,8 +1,29 @@
-# Gap Fixer module
 import json
+from typing import List
+from pydantic import BaseModel, Field, HttpUrl
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from llm_client import llm  # your configured Gemini or Groq model
+from langchain.output_parsers import PydanticOutputParser
+from llm_client import llm  # Gemini/Groq model
+
+# ---- Step 1: Define Pydantic schema ----
+
+class Suggestion(BaseModel):
+    title: str
+    description: str
+
+class Resource(BaseModel):
+    title: str
+    link: HttpUrl
+
+class ImprovementPlan(BaseModel):
+    suggestions: List[Suggestion]
+    resources: List[Resource]
+
+class ImprovementResponse(BaseModel):
+    improvement_plan: ImprovementPlan
+
+# ---- Step 2: Prompt ----
 
 GAP_FIXER_PROMPT = """
 You are a career coach AI.
@@ -16,15 +37,24 @@ Based on this data, suggest:
 - 3 actionable improvement suggestions
 - 2 personalized learning resources (like courses or websites)
 
-Respond in JSON with two keys:
-- "suggestions": [list of 3 tips]
-- "resources": [list of 2 links or course names]
-
-No preamble.
+Respond in strict JSON format matching this Pydantic schema:
+{format_instructions}
 """
 
-template = PromptTemplate.from_template(GAP_FIXER_PROMPT)
-gap_fixer_chain = LLMChain(llm=llm, prompt=template)
+# ---- Step 3: Prepare prompt + parser ----
+
+parser = PydanticOutputParser(pydantic_object=ImprovementResponse)
+
+prompt = PromptTemplate.from_template(GAP_FIXER_PROMPT).partial(
+    format_instructions=parser.get_format_instructions()
+)
+
+# ---- Step 4: Chain with LLM ----
+
+gap_fixer_chain = prompt | llm | parser
+
+# ---- Step 5: Wrapper function ----
+from fastapi.responses import JSONResponse
 
 def generate_improvement_plan(resume_scores: dict, mock_scores: dict, outcome: dict) -> dict:
     input_vars = {
@@ -34,9 +64,10 @@ def generate_improvement_plan(resume_scores: dict, mock_scores: dict, outcome: d
         "outcome_reason": outcome["reason"]
     }
 
-    raw = gap_fixer_chain.run(input_vars)
-
     try:
-        return json.loads(raw)
+        result = gap_fixer_chain.invoke(input_vars)
+        return result.model_dump()  # ✅ Ensures plain dict with str links
     except Exception as e:
-        raise ValueError(f"Failed to parse LLM output: {e}\nRaw output: {raw}")
+        raise ValueError(f"Failed to parse LLM output: {e}")
+
+

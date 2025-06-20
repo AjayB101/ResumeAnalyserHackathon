@@ -320,6 +320,7 @@ const InterviewEvaluationApp = () => {
             )}
 
             {/* Improvement Plan */}
+           {/* Improvement Plan */}
             {results.improvement_plan && (
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center space-x-3">
@@ -329,8 +330,9 @@ const InterviewEvaluationApp = () => {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="bg-white p-6 rounded-lg shadow-md border">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Suggestions</h3>
+                    {/* Corrected path: results.improvement_plan.improvement_plan.suggestions */}
                     <ul className="space-y-3">
-                      {results.improvement_plan.suggestions?.map((suggestion, index) => (
+                      {results.improvement_plan.improvement_plan?.suggestions?.map((suggestion, index) => (
                         <li key={index} className="flex flex-col space-y-1">
                           <div className="flex items-start space-x-2">
                             <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -341,17 +343,18 @@ const InterviewEvaluationApp = () => {
                       ))}
                     </ul>
                   </div>
-                  
+
                   <div className="bg-white p-6 rounded-lg shadow-md border">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Recommended Resources</h3>
+                    {/* Corrected path: results.improvement_plan.improvement_plan.resources */}
                     <ul className="space-y-3">
-                      {results.improvement_plan.resources?.map((resource, index) => (
+                      {results.improvement_plan.improvement_plan?.resources?.map((resource, index) => (
                         <li key={index} className="flex items-start space-x-2">
                           <ExternalLink className="w-4 h-4 text-blue-500 mt-1 flex-shrink-0" />
                           <div className="flex flex-col">
-                            <a 
-                              href={resource.link} 
-                              target="_blank" 
+                            <a
+                              href={resource.link}
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:text-blue-800 font-medium"
                             >
