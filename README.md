@@ -50,7 +50,7 @@ A modular, agent-powered AI system that analyzes a candidate’s resume, evaluat
 │
 └── .env # Environment variables (excluded from git)
 
-## ![System Flowchart](./flowchart.png)
+## ![System Flowchart](./flowchart.jpeg)
 
 ## 📌 Setup Instructions
 
